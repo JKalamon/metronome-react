@@ -1,0 +1,100 @@
+* {
+  box-sizing: border-box;
+}
+
+.App {
+  text-align: center;
+}
+
+.App-logo {
+  height: 40vmin;
+}
+
+.App-header {
+  background-color: #282c34;
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  font-size: calc(10px + 2vmin);
+  color: white;
+}
+
+.App-link {
+  color: #09d3ac;
+}
+
+.logo{
+  position: absolute;
+  left: 20px;
+  top: 0px;
+
+  h1{
+    font-size: 3rem;
+    margin-top:0;
+    color:#03256C;
+  }
+
+  h3{
+    position: absolute;
+    right: 0;
+    top: 30px;
+    color:#06BEE1;
+  }
+}
+
+.bpm-header{
+  color: #1768AC;
+  .bpm-value{
+    font-size: 4rem;
+    font-weight: 900;
+  }
+
+  .bpm-label{
+    font-size: 1.5rem;
+    font-weight: 700;
+    margin-left: 20px;
+  }
+}
+
+.slider-wrapper {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.btn-wrapper {
+  -webkit-user-select: none; /* Safari */
+  -moz-user-select: none; /* Firefox */
+  -ms-user-select: none; /* IE10+/Edge */
+  user-select: none; /* Standard */
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  height: 31px;
+  margin: 20px;
+
+  .btn-round {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    height: 39px;
+    width: 40px;
+    line-height: 39px;
+    font-size: 35px;
+    font-weight: 500;
+    float: right;
+    padding: 0 5px;
+    cursor: pointer;
+    -webkit-border-radius: 50%;
+    -moz-border-radius: 50%;
+    border-radius: 50%;
+    border: thin solid rgba(136, 146, 153, 0.5);
+
+    span {
+      margin-top: -5px;
+      line-height: 32px;
+    }
+  }
+}
