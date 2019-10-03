@@ -1,8 +1,6 @@
 import React from "react";
 import Slider from "react-input-slider";
 import "./App.scss";
-import { MessyMetronome } from "./metronome";
-import { AudioContextHelper } from "./worker-metronome/audio-context-monkey-patch";
 import { Metronome } from "./worker-metronome/metronome";
 
 interface AppState {
@@ -12,14 +10,11 @@ interface AppState {
 }
 
 export class App extends React.Component<{}, AppState> {
-  metronome: MessyMetronome;
-  metronome2: Metronome;
+  metronome: Metronome;
   constructor(props: any) {
     super(props);
     this.state = { bmp: 120, currentBeat: 0, isPlaying: false };
-    AudioContextHelper.initializeAudioContext();
-    this.metronome = new MessyMetronome();
-    this.metronome2 = new Metronome();
+    this.metronome = new Metronome();
   }
 
   render() {
@@ -90,14 +85,11 @@ export class App extends React.Component<{}, AppState> {
     );
   }
 
-  start = () => {
-    //this.metronome.bpm = this.state.x;
-    //this.metronome.callback = this.changeBeat;
-    //this.metronome.start();
+  start = () => {    
     this.setState({ isPlaying: true });
-    this.metronome2.callback = this.changeBeat;
-    this.metronome2.tempo = this.state.bmp;
-    this.metronome2.playOrStop();
+    this.metronome.callback = this.changeBeat;
+    this.metronome.tempo = this.state.bmp;
+    this.metronome.playOrStop();
   };
 
   changeBeat = (beat: number) => {
@@ -105,7 +97,7 @@ export class App extends React.Component<{}, AppState> {
   };
 
   stop = () => {
-    this.metronome2.playOrStop();
+    this.metronome.playOrStop();
     this.setState({ isPlaying: false });
   };
 }
