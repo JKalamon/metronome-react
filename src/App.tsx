@@ -3,33 +3,42 @@ import Slider from "react-input-slider";
 import "./App.scss";
 import { MessyMetronome } from "./metronome";
 import { AudioContextHelper } from "./worker-metronome/audio-context-monkey-patch";
+import { Metronome } from "./worker-metronome/metronome";
 
-export class App extends React.Component<{}, { x: number; beat: number }> {
+interface AppState {
+  bmp: number;
+  currentBeat: number;
+  isPlaying: boolean;
+}
+
+export class App extends React.Component<{}, AppState> {
   metronome: MessyMetronome;
+  metronome2: Metronome;
   constructor(props: any) {
     super(props);
-    this.state = { x: 120, beat: 0 };
+    this.state = { bmp: 120, currentBeat: 0, isPlaying: false };
     AudioContextHelper.initializeAudioContext();
     this.metronome = new MessyMetronome();
+    this.metronome2 = new Metronome();
   }
 
   render() {
     return (
-      <div className="App">
+      <div className={`App ${this.state.isPlaying ? 'color-' + this.state.currentBeat : ''}`}>
         <div className="logo">
           <h1>Web metronome</h1>
           <h3>by MrBubel</h3>
         </div>
 
         <div className="bpm-header">
-          <span className="bpm-value">{this.state.x}</span>
+          <span className="bpm-value">{this.state.bmp}</span>
           <span className="bpm-label">BPM</span>
         </div>
         <div className="slider-wrapper">
           <div className="btn-wrapper">
             <div
               className="btn-round"
-              onClick={() => this.setState({ x: this.state.x - 1 })}
+              onClick={() => this.setState({ bmp: this.state.bmp - 1 })}
             >
               <span>-</span>
             </div>
@@ -44,37 +53,61 @@ export class App extends React.Component<{}, { x: number; beat: number }> {
             xstep={1}
             xmin={20}
             xmax={200}
-            x={this.state.x}
+            x={this.state.bmp}
             onChange={(result: { x: number; y: number }) => {
-              this.setState({ x: parseFloat(result.x.toFixed(2)) });
+              this.setState({ bmp: parseFloat(result.x.toFixed(2)) });
             }}
           />
           <div className="btn-wrapper">
-            <div className="btn-round">
+            <div className="btn-round"
+            onClick={() => this.setState({ bmp: this.state.bmp + 1 })}>
               <span>+</span>
             </div>
           </div>
         </div>
-        {this.metronome.isWorking ? <div className="btn" onClick={this.stop}>Stop</div> : <div className="btn" onClick={this.start}>Start</div>}
-        
-        {this.state.beat}
+        {this.state.isPlaying ? (
+          <div className="btn" onClick={this.stop}>
+            Stop
+          </div>
+        ) : (
+          <div className="btn" onClick={this.start}>
+            Start
+          </div>
+        )}
+
+        <div className="circle-wrapper">
+          {[0, 1, 2, 3].map(element => {
+            return (
+              <div
+                className={`circle ${
+                  element === this.state.currentBeat ? "selected" : ""
+                }`}
+              ></div>
+            );
+          })}
+        </div>
       </div>
     );
   }
 
   start = () => {
-    this.metronome.bpm = this.state.x;
-    this.metronome.callback = this.changeBeat;
-    this.metronome.start();
-  }
+    //this.metronome.bpm = this.state.x;
+    //this.metronome.callback = this.changeBeat;
+    //this.metronome.start();
+    this.setState({ isPlaying: true });
+    this.metronome2.callback = this.changeBeat;
+    this.metronome2.tempo = this.state.bmp;
+    this.metronome2.playOrStop();
+  };
 
   changeBeat = (beat: number) => {
-    this.setState({ beat: beat });
+    this.setState({ currentBeat: beat });
   };
 
   stop = () => {
-    this.metronome.stop();
-  }
+    this.metronome2.playOrStop();
+    this.setState({ isPlaying: false });
+  };
 }
 
 export default App;
