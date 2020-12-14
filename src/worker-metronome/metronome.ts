@@ -2,7 +2,7 @@ import { MetronomeWorker } from "./metronome.worker";
 import { AudioContextHelper } from "./audio-context-monkey-patch";
 
 export class Metronome {
-  public audioContext: any = null;
+  private audioContext: any = null;
   public unlocked = false;
   public isPlaying = false; // Are we currently playing?
   public startTime: number = 0; // The start time of the entire sequence.
@@ -23,6 +23,7 @@ export class Metronome {
   public timerWorker: any = null; // The Web Worker used to fire timer messages
   public lastFillColor = "black";
   private windowAsAny = window as any;
+  public enableAudio = true;
 
   constructor() {
     // First, let's shim the requestAnimationFrame API, with a setTimeout fallback
@@ -49,7 +50,7 @@ export class Metronome {
     this.timerWorker = worker;
 
     this.timerWorker.onmessage = (e: any) => {
-      if (e.data == "tick") {
+      if (e.data === "tick") {
         this.scheduler();
       } else console.log("message: " + e.data);
     };
@@ -62,7 +63,7 @@ export class Metronome {
     this.nextNoteTime += 0.25 * secondsPerBeat; // Add beat length to last beat time
 
     this.current16thNote++; // Advance the beat number, wrap to zero
-    if (this.current16thNote == 16) {
+    if (this.current16thNote === 16) {
       this.current16thNote = 0;
     }
   };
@@ -71,12 +72,14 @@ export class Metronome {
     // push the note on the queue, even if we're not playing.
     this.notesInQueue.push({ note: beatNumber, time: time });
 
-    if (this.noteResolution == 1 && beatNumber % 2) return; // we're not playing non-8th 16th notes
-    if (this.noteResolution == 2 && beatNumber % 4) return; // we're not playing non-quarter 8th notes
+    if (this.noteResolution === 1 && beatNumber % 2) return; // we're not playing non-8th 16th notes
+    if (this.noteResolution === 2 && beatNumber % 4) return; // we're not playing non-quarter 8th notes
 
     // create an oscillator
     var osc = this.audioContext.createOscillator();
-    osc.connect(this.audioContext.destination);
+    if(this.enableAudio)
+      osc.connect(this.audioContext.destination);
+      
     if (beatNumber % 16 === 0)
       // beat 0 == high pitch
       osc.frequency.value = 880.0;

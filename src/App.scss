@@ -115,19 +115,47 @@
   }
 }
 
-$color: red;
-
-.color-0{
-  background: $color;
+.options{
+  position: absolute;
+  top: 20px;
+  right: 20px;
 }
 
-.color-1{
-  background: lighten($color, 20);
+$colors: #1abc9c, #2ecc71, #3498db, #9b59b6, #34495e, #16a085, #27ae60, #2980b9, #8e44ad, #2c3e50, #f1c40f, #e67e22, #e74c3c, #ecf0f1, #95a5a6, #f39c12, #d35400, #c0392b, #bdc3c7, #7f8c8d;
+
+.colors-wrapper{
+  width: 170px;
+  .square{
+    cursor: pointer;
+    width: 20px;
+    height: 20px;
+    margin-right: 5px;
+    margin-left: 5px;
+    display: inline-block;
+    border: 2px solid #fff;
+
+    &.selected{
+      border: 2px solid #03256c;
+    }
+  }
 }
 
-.color-2{
-  background: lighten($color, 30);
-}
-.color-3{
-  background: lighten($color, 60);
+
+@each $color in $colors {
+  $i: index($colors, $color) - 1;
+
+  .color#{$i}-0{
+    background: $color;
+  }
+  
+  .color#{$i}-1{
+    background: lighten($color, 20);
+  }
+  
+  .color#{$i}-2{
+    background: lighten($color, 30);
+  }
+  .color#{$i}-3{
+    background: lighten($color, 60);
+  }
 }
